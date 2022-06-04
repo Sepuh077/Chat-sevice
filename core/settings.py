@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'authentication',
     'chat',
     
-    'channels',
+    # 'channels',
 ]
 
 MIDDLEWARE = [
@@ -75,6 +75,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -128,7 +136,7 @@ STATIC_URL = '/static/'
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'apps/static'),
+    os.path.join(BASE_DIR, 'static/'),
 )
 
 MEDIA_URL = '/media/'

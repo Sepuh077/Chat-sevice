@@ -12,19 +12,21 @@
 <div class="page">
     <div class="page-content">
         <div class="page-titles">
-            <div class="login-title active">
+            <a class="login-title" href="{% url 'login' %}">
                 Login
-            </div>
-            <a class="register-title" href="{% url 'register' %}">
-                Register
             </a>
+            <div class="register-title active">
+                Register
+            </div>
         </div>
         <form method="post">
             {% csrf_token %}
             {{form.email}}
-            {{form.password}}
-            {{form.errors}}
-            <button>Login</button>
+            {{form.name}}
+            {{form.birth_date}}
+            {{form.password1}}
+            {{form.password2}}
+            <button>Register</button>
         </form>
     </div>
 </div>

@@ -34,15 +34,21 @@ class UserManager(BaseUserManager):
 
 
 class Profile(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(
+        unique=True
+    )
     
-    name = models.CharField(max_length=128)
-    profile_img = models.ImageField(upload_to='profile/')
+    name = models.CharField(
+        max_length=128
+    )
+    profile_img = models.ImageField(
+        upload_to='profile/'
+    )
     birth_date = models.DateField()
     
     is_active = models.BooleanField(default=True)
-    is_superuser = models.BooleanField()
-    is_staff = models.BooleanField()
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     
     USERNAME_FIELD = 'email'
     
@@ -55,4 +61,3 @@ class Profile(AbstractBaseUser, PermissionsMixin):
         
     def __str__(self):
         return self.name
-    

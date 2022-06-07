@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [    
     'authentication',
     'chat',
+    'dashboard',
     
     'django.contrib.admin',
     'django.contrib.auth',

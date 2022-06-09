@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{% endblock title %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block content %}
+<input id="input" type="text">
+<div id="images"></div>
+{% endblock content %}
+
+{% block js %}
+<script>
+    var value = ''
+    $(document).ready(function () {
+        $('#input').on('keyup', function () {
+            value = $(this).val()
+            console.log(value)
+            if(!value) {
+                $('#images').html('')
+                return
+            }
+            $.ajax({
+                method: 'GET',
+                url: '/todo/get-google-images/',
+                dataType: 'json',
+                data: {
+                    'name': value,
+                },
+                success: function (data) {
+                    let html_code = ""
+                    if (value == data['name']) {
+                        for (let i = 0; i < data['images'].length; ++i) {
+                            html_code += `<img src=${data[i]}>`
+                        }
+                        $('#images').html(html_code)
+                    }
+                }
+            })
+        })
+    })
+</script>
+{% endblock js %}

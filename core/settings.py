@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'authentication',
     'chat',
     'dashboard',
+    'todo_list',
     
     'django.contrib.admin',
     'django.contrib.auth',

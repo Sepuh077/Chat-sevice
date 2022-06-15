@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/auth.css">
+{% endblock css %}
+
+{% block content %}
+<div class="page">
+    <div class="page-content">
+        <div class="page-titles">
+            <div class="login-title">
+                Login
+            </div>
+            <div class="register-title">
+                Register
+            </div>
+        </div>
+        <form method="post" id="login-form" style="display: none;">
+            {% csrf_token %}
+            {{login_form.email}}
+            {{login_form.password}}
+            {{login_form.errors}}
+            <button name="login">Login</button>
+        </form>
+        <form method="post" id="register-form" style="display: none;">
+            {% csrf_token %}
+            {{register_form.email}}
+            {{register_form.name}}
+            {{register_form.birth_date}}
+            {{register_form.password1}}
+            {{register_form.password2}}
+            <button name="register">Register</button>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script>
+    let url = window.location.href
+
+    function check_url() {
+        if (url.includes('login')) {
+            document.getElementById('register-form').style.display = "none"
+            document.querySelector('.register-title').classList.remove('active')
+            document.getElementById('login-form').style.display = "flex"
+            document.querySelector('.login-title').classList.add('active')
+        }
+        else if (url.includes('register')) {
+            document.getElementById('login-form').style.display = "none"
+            document.querySelector('.login-title').classList.remove('active')
+            document.getElementById('register-form').style.display = "flex"
+            document.querySelector('.register-title').classList.add('active')
+        }
+    }
+
+    check_url()
+    $(document).ready(function () {
+        $('.login-title').click(function () {
+            console.log(url)
+            if (url.includes('login')) {
+                return
+            }
+            window.history.pushState('', 'Register', url.replace('register', 'login'))
+            url = window.location.href
+            check_url()
+        })
+        $('.register-title').click(function () {
+            console.log(url)
+            if (url.includes('register')) {
+                return
+            }
+            window.history.pushState('', 'Login', url.replace('login', 'register'))
+            url = window.location.href
+            check_url()
+        })
+    })
+</script>
+{% endblock js %}

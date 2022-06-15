@@ -23,6 +23,10 @@ class RegisterForm(UserCreationForm):
         )
     )
     
+    day = forms.ChoiceField(
+        choices=[(i, i) for i in range(1, 32)]
+    )
+    
     class Meta:
         model = Profile
         

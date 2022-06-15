@@ -19,7 +19,6 @@
     $(document).ready(function () {
         $('#input').on('keyup', function () {
             value = $(this).val()
-            console.log(value)
             if(!value) {
                 $('#images').html('')
                 return
@@ -33,9 +32,11 @@
                 },
                 success: function (data) {
                     let html_code = ""
+                    console.log(data)
                     if (value == data['name']) {
                         for (let i = 0; i < data['images'].length; ++i) {
-                            html_code += `<img src=${data[i]}>`
+                            console.log(data['images'][i])
+                            html_code += `<img src=${data['images'][i]}>`
                         }
                         $('#images').html(html_code)
                     }

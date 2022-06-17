@@ -10,7 +10,7 @@ class Command(BaseCommand):
             try:
                 Profile.objects.create(
                     email=f'test{i}@gmail.com',
-                    name=''.join(random.choice(string.ascii_lowercase) for _ in range(random.randint(5, 11))) + " " + ''.join(random.choice(string.ascii_lowercase) for _ in range(random.randint(5, 11))) + " " + ''.join(random.choice(string.ascii_lowercase) for _ in range(random.randint(5, 11))),
+                    name=''.join(random.choice(string.ascii_lowercase) for _ in range(random.randint(5, 11))) + " " + ''.join(random.choice(string.ascii_lowercase) for _ in range(random.randint(5, 11))),
                     birth_date=now().date(),
                     password='test'
                 )

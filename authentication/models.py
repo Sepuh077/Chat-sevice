@@ -42,7 +42,8 @@ class Profile(AbstractBaseUser, PermissionsMixin):
         max_length=128
     )
     profile_img = models.ImageField(
-        upload_to='profile/'
+        upload_to='profile/',
+        default='default.jpeg',
     )
     birth_date = models.DateField()
     

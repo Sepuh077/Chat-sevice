@@ -5,53 +5,103 @@
 {% endblock title %}
 
 {% block css %}
-<link rel="stylesheet" href="/static/css/auth.css">
+<link rel="stylesheet" href="/static/css/chat.css">
 {% endblock css %}
 
 {% block content %}
+<input id="search-profiles">
+<div id="founded_profiles"></div>
+{% if group_id %}
 <textarea id="chat-log" cols="100" rows="20"></textarea><br>
 <input id="chat-message-input" type="text" size="100"><br>
 <input id="chat-message-submit" type="button" value="Send">
 {{ group_id|json_script:"group-id" }}
+{% endif %}
 {% endblock content %}
 
 {% block js %}
 <script>
     const sender = '{{request.user.id}}'
-    const group_id = JSON.parse(document.getElementById('group-id').textContent);
+    var group_id
+    try {
+        group_id = JSON.parse(document.getElementById('group-id').textContent);
+    }
+    catch {
+        group_id = null
+    }
 
-    const chatSocket = new WebSocket(
-        'ws://'
-        + window.location.host
-        + '/ws/chat/'
-        + group_id
-        + '/'
-    );
+    function run_socket() {
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + group_id
+            + '/'
+        );
 
-    chatSocket.onmessage = function (e) {
-        const data = JSON.parse(e.data);
-        document.querySelector('#chat-log').value += (data.message + '\n');
-    };
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            document.querySelector('#chat-log').value += (data.message + '\n');
+        };
 
-    chatSocket.onclose = function (e) {
-        console.error('Chat socket closed unexpectedly');
-    };
+        chatSocket.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+        };
 
-    document.querySelector('#chat-message-input').focus();
-    document.querySelector('#chat-message-input').onkeyup = function (e) {
-        if (e.keyCode === 13) {  // enter, return
-            document.querySelector('#chat-message-submit').click();
-        }
-    };
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function (e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
 
-    document.querySelector('#chat-message-submit').onclick = function (e) {
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'sender': sender
-        }));
-        messageInputDom.value = '';
-    };
+        document.querySelector('#chat-message-submit').onclick = function (e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sender': sender
+            }));
+            messageInputDom.value = '';
+        };
+    }
+
+    if (group_id) {
+        run_socket()
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('#search-profiles').on('keyup', function () {
+            value = $(this).val()
+            if(!value) {
+                $('#founded_profiles').html('')
+                return
+            }
+            $.ajax({
+                method: 'GET',
+                url: `/chat/get-profiles/search=${value}/`,
+                dataType: 'json',
+                success: function (profiles) {
+                    let html_code = ""
+                    for(let i = 0; i < profiles.length; ++i) {
+                        html_code += `
+                        <div>
+                            <div><img src='${profiles[i]['image']}''></div>
+                            <div>
+                                <div>${profiles[i]['name']}</div>
+                                <div>${profiles[i]['email']}</div>
+                            </div>
+                            <div>
+
+                            </div>
+                        </div>
+                        `
+                    }
+                    $('#founded_profiles').html(html_code)
+                }
+            })
+        })
+    })
 </script>
 {% endblock js %}

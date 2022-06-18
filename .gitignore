@@ -1,5 +1,5 @@
 venv/
-media/profile/
+media/
 __pycache__/
 migrations/
 

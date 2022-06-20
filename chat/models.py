@@ -9,6 +9,16 @@ class Group(models.Model):
         on_delete=models.SET_NULL, 
         null=True, 
         blank=True
+    ) # Personal groups has no admin
+    name = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True
+    )
+    picture = models.ImageField(
+        upload_to='group/',
+        blank=True,
+        null=True
     )
     members = models.ManyToManyField(
         Profile, 

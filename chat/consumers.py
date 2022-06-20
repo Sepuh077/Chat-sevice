@@ -1,5 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from .manager import create_text_message
+from threading import Thread
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -25,8 +27,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        print(text_data_json)
 
+        thread = Thread(
+            target=create_text_message, 
+            args=(text_data_json['sender'], self.room_group_name.replace('chat_', ''), message)
+        )
+        thread.start()
+        thread.join()
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,

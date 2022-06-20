@@ -9,14 +9,30 @@
 {% endblock css %}
 
 {% block content %}
-<input id="search-profiles">
-<div id="founded_profiles"></div>
-{% if group_id %}
-<textarea id="chat-log" cols="100" rows="20"></textarea><br>
-<input id="chat-message-input" type="text" size="100"><br>
-<input id="chat-message-submit" type="button" value="Send">
-{{ group_id|json_script:"group-id" }}
-{% endif %}
+<div class="chat-container">
+    <div>
+        <input id="search-profiles">
+        <div id="founded_profiles" class="founded_profiles"></div>
+        <div class="groups">
+            {% for group in groups %}
+            <a href="{% url 'room' group_id=group.id %}" class="profile">
+                <div class="profile-img"><img src='{{group.picture}}'></div>
+                <div class="profile-info">
+                    <div>{{group.name}}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% if group_id %}
+    <div>
+        <div id="messenger"></div>
+        <input id="chat-message-input" type="text" size="100"><br>
+        <input id="chat-message-submit" type="button" value="Send">
+        {{ group_id|json_script:"group-id" }}
+    </div>
+    {% endif %}
+</div>
 {% endblock content %}
 
 {% block js %}
@@ -41,7 +57,8 @@
 
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
+            console.log(data)
+            document.querySelector('#messenger').innerHTML += (data.message + '<br>');
         };
 
         chatSocket.onclose = function (e) {
@@ -74,7 +91,7 @@
     $(document).ready(function () {
         $('#search-profiles').on('keyup', function () {
             value = $(this).val()
-            if(!value) {
+            if (!value) {
                 $('#founded_profiles').html('')
                 return
             }
@@ -84,18 +101,15 @@
                 dataType: 'json',
                 success: function (profiles) {
                     let html_code = ""
-                    for(let i = 0; i < profiles.length; ++i) {
+                    for (let i = 0; i < profiles.length; ++i) {
                         html_code += `
-                        <div class="founded-profile">
+                        <a href="/chat/redirect-to-personal-chat/${profiles[i]['id']}/" class="founded-profile">
                             <div class="founded-profile-img"><img src='${profiles[i]['image']}''></div>
                             <div class="founded-profile-info">
                                 <div>${profiles[i]['name']}</div>
                                 <div>${profiles[i]['email']}</div>
                             </div>
-                            <div>
-
-                            </div>
-                        </div>
+                        </a>
                         `
                     }
                     $('#founded_profiles').html(html_code)

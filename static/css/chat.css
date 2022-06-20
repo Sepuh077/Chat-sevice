@@ -1,27 +1,51 @@
-.founded-profile-img {
+.groups, .founded_profiles {
+    overflow-y: auto;
+    width: min-content;
+    height: 100%;
+}
+
+.founded_profiles {
+    position: absolute;
+    background-color: rgb(50, 50, 50);
+}
+
+.founded-profile-img, .profile-img {
     width: 70px;
     height: 70px;
 }
 
-.founded-profile-img img {
+.founded-profile-img img, .profile-img img {
     width: 100%;
     height: 100%;
     border-radius: 50%; 
 }
 
-.founded-profile {
+.founded-profile, .profile {
     display: flex;
     cursor: pointer;
     margin-top: 5px;
     background-color: rgb(50, 50, 50);
-    width: 300px;
+    width: 280px;
+    padding: 10px;
 }
 
-.founded-profile:hover {
+.founded-profile:hover, .profile:hover {
     background-color: rgb(70, 70, 70);
 }
 
-.founded-profile-info {
+.founded-profile-info, .profile-info {
     color: white;
     margin-left: 10px;
+    width: 200px;
+}
+
+.founded-profile-info div, .profile-info div {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.chat-container {
+    display: flex;
 }

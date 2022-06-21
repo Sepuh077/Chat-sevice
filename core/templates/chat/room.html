@@ -15,7 +15,8 @@
         <div id="founded_profiles" class="founded_profiles"></div>
         <div class="groups">
             {% for group in groups %}
-            <a href="{% url 'room' group_id=group.id %}" class="profile">
+            <a href="{% url 'room' group_id=group.id %}"
+                class="profile {% if group_id == group.id %} selected-group {% endif %}">
                 <div class="profile-img"><img src='{{group.picture}}'></div>
                 <div class="profile-info">
                     <div>{{group.name}}</div>
@@ -25,18 +26,22 @@
         </div>
     </div>
     {% if group_id %}
-    <div>
-        <div id="messenger">
+    <div class="messenger">
+        <div id="messages" class="messages">
             {% for msg in messages %}
-            <div>
+            <div class="message-info">
                 {{msg.sender.name}}<br>
                 {{msg.sent_time}}<br>
-                {{msg.text}}<br>
+                <div class="message-text">
+                    {{msg.text}}
+                </div>
             </div><br>
             {% endfor %}
         </div>
-        <input id="chat-message-input" type="text" size="100"><br>
-        <input id="chat-message-submit" type="button" value="Send">
+        <div class="messasge-input">
+            <input id="chat-message-input" type="text">
+            <input id="chat-message-submit" type="button" value="Send">
+        </div>
         {{ group_id|json_script:"group-id" }}
     </div>
     {% endif %}
@@ -66,7 +71,7 @@
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
             console.log(data)
-            document.querySelector('#messenger').innerHTML += (data.message + '<br>');
+            document.querySelector('#messages').innerHTML = (data.message + '<br>') + document.querySelector('#messages').innerHTML;
         };
 
         chatSocket.onclose = function (e) {

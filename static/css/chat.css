@@ -29,6 +29,10 @@
     padding: 10px;
 }
 
+.selected-group {
+    background-color: rgb(70, 70, 70);
+}
+
 .founded-profile:hover, .profile:hover {
     background-color: rgb(70, 70, 70);
 }
@@ -48,4 +52,31 @@
 
 .chat-container {
     display: flex;
+    height: 100%;
+}
+
+.messenger {
+    width: 100%;
+}
+
+.messages {
+    background-color: white;
+    height: calc(100% - 30px);
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-y: auto;
+    /* flex-flow: column nowrap; */
+}
+
+.message-input {
+    height: 30px;
+    display: flex;
+}
+
+.message-text {
+    width: min-content;
+    max-width: 50%;
+    background-color: rgb(240, 240, 240);
+    padding: 15px;
+    border-radius: 10px;
 }

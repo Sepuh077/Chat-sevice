@@ -106,7 +106,7 @@ def get_message_data(message):
     
 
 def get_group_messages(group):
-    messages = Message.objects.filter(receiver=group).order_by('sent_time')
+    messages = Message.objects.filter(receiver=group).order_by('-sent_time')
     data = []
     for message in messages:
         message_data = get_message_data(message)

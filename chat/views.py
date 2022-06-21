@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from authentication.manager import get_profile_by_id
-from .manager import get_group_by_id, get_profiles_by_text, get_personal_group_by_users, create_personal_group, get_user_groups_info
+from .manager import *
 from django.contrib.auth.decorators import login_required
 
 
@@ -23,7 +23,8 @@ def room(request, group_id):
     
     context = {
         'group_id': group_id,
-        'groups': get_user_groups_info(request.user)
+        'groups': get_user_groups_info(request.user),
+        'messages': get_group_messages(group)
     }
     return render(request, 'chat/room.html', context)
 

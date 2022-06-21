@@ -26,7 +26,15 @@
     </div>
     {% if group_id %}
     <div>
-        <div id="messenger"></div>
+        <div id="messenger">
+            {% for msg in messages %}
+            <div>
+                {{msg.sender.name}}<br>
+                {{msg.sent_time}}<br>
+                {{msg.text}}<br>
+            </div><br>
+            {% endfor %}
+        </div>
         <input id="chat-message-input" type="text" size="100"><br>
         <input id="chat-message-submit" type="button" value="Send">
         {{ group_id|json_script:"group-id" }}

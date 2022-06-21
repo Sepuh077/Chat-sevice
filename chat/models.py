@@ -45,7 +45,7 @@ class Message(models.Model):
     
 class TextMessage(models.Model):
     text = models.TextField()
-    message = models.ForeignKey(
+    message = models.OneToOneField(
         Message, 
         on_delete=models.CASCADE
     )

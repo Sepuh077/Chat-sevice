@@ -88,3 +88,29 @@ def create_text_message(sender_id, group_id, text):
         message=message,
         text=text
     )
+    
+
+def get_message_data(message):
+    text_msg = TextMessage.objects.filter(message=message).first()
+    
+    return {
+        'id': message.id,
+        'sender': {
+            'id': message.sender.id,
+            'name': message.sender.name,
+            'picture': message.sender.profile_img,
+        },
+        'sent_time': message.sent_time,
+        'text': text_msg.text
+    } if text_msg else None
+    
+
+def get_group_messages(group):
+    messages = Message.objects.filter(receiver=group).order_by('sent_time')
+    data = []
+    for message in messages:
+        message_data = get_message_data(message)
+        if message_data:
+            data.append(message_data)
+
+    return data

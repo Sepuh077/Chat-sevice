@@ -98,19 +98,23 @@ def get_message_data(message):
         'sender': {
             'id': message.sender.id,
             'name': message.sender.name,
-            'picture': message.sender.profile_img,
+            'picture': message.sender.profile_img.url,
         },
-        'sent_time': message.sent_time,
+        'sent_time': message.sent_time.strftime('%H:%M'),
         'text': text_msg.text
     } if text_msg else None
     
 
 def get_group_messages(group):
-    messages = Message.objects.filter(receiver=group).order_by('-sent_time')
-    data = []
-    for message in messages:
-        message_data = get_message_data(message)
-        if message_data:
-            data.append(message_data)
+    dates = Message.objects.filter(receiver=group).values_list('sent_time__date', flat=True).order_by('-sent_time__date')
+    data = {}
+    for date in dates:
+        key = date.strftime('%B %d')
+        data[key] = []
+        messages = Message.objects.filter(receiver=group, sent_time__date=date).order_by('-sent_time')
+        for message in messages:
+            message_data = get_message_data(message)
+            if message_data:
+                data[key].append(message_data)
 
     return data

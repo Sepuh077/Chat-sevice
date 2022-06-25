@@ -28,14 +28,27 @@
     {% if group_id %}
     <div class="messenger">
         <div id="messages" class="messages">
+            {% for date, messages in messages_data.items %}
             {% for msg in messages %}
-            <div class="message-info">
-                {{msg.sender.name}}<br>
-                {{msg.sent_time}}<br>
-                <div class="message-text">
-                    {{msg.text}}
+            <div class="message-info-container" {% if msg.sender.id == request.user.id %} style="align-items: flex-end;" {% endif %}>
+                <div class="message-info">
+                    <div class="message-text">
+                        <div class="message-header">
+                            {{msg.sender.name}}
+                        </div>
+                        {{msg.text}}
+                        <div class="message-sent-time">
+                            {{msg.sent_time}}
+                        </div>
+                    </div>
                 </div>
-            </div><br>
+            </div>
+            {% endfor %}
+            <div class="date-container">
+                <div class="date">
+                    {{date}}
+                </div>
+            </div>
             {% endfor %}
         </div>
         <div class="messasge-input">
@@ -49,14 +62,39 @@
 {% endblock content %}
 
 {% block js %}
+{% autoescape off %}
 <script>
     const sender = '{{request.user.id}}'
+    const sender_name = '{{request.user.name}}'
+    const messages = {{messages_data}}
+    var x = new Date()
+    console.log(x.getUTCHours() + ':' + x.getUTCMinutes())
     var group_id
     try {
         group_id = JSON.parse(document.getElementById('group-id').textContent);
     }
     catch {
         group_id = null
+    }
+
+    function create_message_html(message) {
+        //TODO: need to add for date
+        let time = new Date()
+        let sent_time = time.getUTCHours() + ':' + time.getUTCMinutes()
+
+        return `<div class="message-info-container" style="align-items: flex-end;">
+                <div class="message-info">
+                    <div class="message-text">
+                        <div class="message-header">
+                            ${sender_name}
+                        </div>
+                        ${message}
+                        <div class="message-sent-time">
+                            ${sent_time}
+                        </div>
+                    </div>
+                </div>
+            </div>`
     }
 
     function run_socket() {
@@ -70,8 +108,7 @@
 
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            console.log(data)
-            document.querySelector('#messages').innerHTML = (data.message + '<br>') + document.querySelector('#messages').innerHTML;
+            document.querySelector('#messages').innerHTML = create_message_html(data.message) + document.querySelector('#messages').innerHTML;
         };
 
         chatSocket.onclose = function (e) {
@@ -100,6 +137,7 @@
         run_socket()
     }
 </script>
+{% endautoescape %}
 <script>
     $(document).ready(function () {
         $('#search-profiles').on('keyup', function () {

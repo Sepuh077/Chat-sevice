@@ -24,7 +24,7 @@ def room(request, group_id):
     context = {
         'group_id': group_id,
         'groups': get_user_groups_info(request.user),
-        'messages': get_group_messages(group)
+        'messages_data': get_group_messages(group)
     }
     return render(request, 'chat/room.html', context)
 

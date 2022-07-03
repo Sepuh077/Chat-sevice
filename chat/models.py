@@ -30,6 +30,10 @@ class Group(models.Model):
     
 
 class Message(models.Model):
+    replied_from = models.IntegerField(
+        blank=True,
+        null=True
+    )
     sender = models.ForeignKey(
         Profile, 
         on_delete=models.CASCADE

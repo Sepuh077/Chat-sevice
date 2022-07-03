@@ -66,7 +66,7 @@
 <script>
     const sender = '{{request.user.id}}'
     const sender_name = '{{request.user.name}}'
-    const messages = {{messages_data}}
+    const messages = '{{messages_data}}'
     var x = new Date()
     console.log(x.getUTCHours() + ':' + x.getUTCMinutes())
     var group_id
@@ -169,4 +169,5 @@
         })
     })
 </script>
+<script src="/static/js/get-messages.js"></script>
 {% endblock js %}

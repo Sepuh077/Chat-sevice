@@ -90,6 +90,22 @@ def create_text_message(sender_id, group_id, text):
     )
     
 
+def get_replied_from_message_data(msg_id):
+    try:
+        message = Message.objects.get(msg_id)
+        text_msg = TextMessage.objects.filter(message=message).first()
+        return {
+            'id': message.id,
+            'sender': {
+                'id': message.sender.id,
+                'name': message.sender.name,
+            },
+            'text': text_msg.text,
+        }
+    except Exception:
+        return None
+    
+
 def get_message_data(message):
     text_msg = TextMessage.objects.filter(message=message).first()
     
@@ -100,21 +116,28 @@ def get_message_data(message):
             'name': message.sender.name,
             'picture': message.sender.profile_img.url,
         },
-        'sent_time': message.sent_time.strftime('%H:%M'),
+        'replied_from': get_replied_from_message_data(message.replied_from),
+        'sent_time': message.sent_time.strftime('%B %d|%H:%M'),
         'text': text_msg.text
     } if text_msg else None
     
 
-def get_group_messages(group):
-    dates = Message.objects.filter(receiver=group).values_list('sent_time__date', flat=True).order_by('-sent_time__date')
-    data = {}
-    for date in dates:
-        key = date.strftime('%B %d')
-        data[key] = []
-        messages = Message.objects.filter(receiver=group, sent_time__date=date).order_by('-sent_time')
-        for message in messages:
-            message_data = get_message_data(message)
-            if message_data:
-                data[key].append(message_data)
+def get_group_messages(group, start_from=0):
+    data = []
+    messages = Message.objects.filter(receiver=group).order_by('-sent_time')[start_from: start_from + 10]
+    for message in messages:
+        msg_data = get_message_data(message)
+        if msg_data:
+            data.append(msg_data)
+    # dates = Message.objects.filter(receiver=group).values_list('sent_time__date', flat=True).order_by('-sent_time__date')
+    # data = {}
+    # for date in dates:
+    #     key = date.strftime('%B %d')
+    #     data[key] = []
+    #     messages = Message.objects.filter(receiver=group, sent_time__date=date).order_by('-sent_time')
+    #     for message in messages:
+    #         message_data = get_message_data(message)
+    #         if message_data:
+    #             data[key].append(message_data)
 
     return data

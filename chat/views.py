@@ -24,9 +24,24 @@ def room(request, group_id):
     context = {
         'group_id': group_id,
         'groups': get_user_groups_info(request.user),
-        'messages_data': get_group_messages(group)
+        # 'messages_data': get_group_messages(group)
     }
     return render(request, 'chat/room.html', context)
+
+
+@login_required(login_url='/login/')
+def get_messages(request, group_id):
+    data = {}
+    if request.method == 'GET':
+        group = get_group_by_id(group_id)
+        if group and group.members.contains(request.user):
+            gotten_messages_count = request.GET.get('count', 0)
+            data = {
+                'messages': get_group_messages(group),
+                'user_id': request.user.id
+            }
+        
+    return JsonResponse(data)
 
 
 @login_required(login_url='/login/')

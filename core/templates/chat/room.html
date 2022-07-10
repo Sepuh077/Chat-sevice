@@ -27,29 +27,10 @@
     </div>
     {% if group_id %}
     <div class="messenger">
-        <div id="messages" class="messages">
-            {% for date, messages in messages_data.items %}
-            {% for msg in messages %}
-            <div class="message-info-container" {% if msg.sender.id == request.user.id %} style="align-items: flex-end;" {% endif %}>
-                <div class="message-info">
-                    <div class="message-text">
-                        <div class="message-header">
-                            {{msg.sender.name}}
-                        </div>
-                        {{msg.text}}
-                        <div class="message-sent-time">
-                            {{msg.sent_time}}
-                        </div>
-                    </div>
-                </div>
+        <div id="messages-container" class="messages-container">
+            <div id="messages" class="messages">
+
             </div>
-            {% endfor %}
-            <div class="date-container">
-                <div class="date">
-                    {{date}}
-                </div>
-            </div>
-            {% endfor %}
         </div>
         <div class="messasge-input">
             <input id="chat-message-input" type="text">
@@ -67,8 +48,6 @@
     const sender = '{{request.user.id}}'
     const sender_name = '{{request.user.name}}'
     const messages = '{{messages_data}}'
-    var x = new Date()
-    console.log(x.getUTCHours() + ':' + x.getUTCMinutes())
     var group_id
     try {
         group_id = JSON.parse(document.getElementById('group-id').textContent);
@@ -77,11 +56,35 @@
         group_id = null
     }
 
+    get_date_html(new Date())
+
+    function get_date_html(time) {
+        const month = time.toLocaleString('default', { month: 'long' });
+        const last_msg_date = $('#messages > .date-container:first > div').text().trimStart().trimEnd()
+        const last_msg_month = last_msg_date.split(' ')[0]
+        const last_msg_day = last_msg_date.split(' ')[1]
+        let msg_date
+        let today = time.getUTCDate()
+        today = today < 10 ? '0' + today: today.toString()
+        if(last_msg_date.split(' ').length > 2 || last_msg_month != month || last_msg_day != today) {
+            msg_date = month + ' ' + today
+        }
+        
+        if(msg_date) {
+            return `<div class="date-container">
+                        <div class="date">
+                            ${msg_date}
+                        </div>
+                    </div>`
+        }
+        return ''
+    }
+
     function create_message_html(message) {
-        //TODO: need to add for date
         let time = new Date()
         let sent_time = time.getUTCHours() + ':' + time.getUTCMinutes()
-
+        let date_html = get_date_html(time)
+        delete time
         return `<div class="message-info-container" style="align-items: flex-end;">
                 <div class="message-info">
                     <div class="message-text">
@@ -94,7 +97,8 @@
                         </div>
                     </div>
                 </div>
-            </div>`
+            </div>
+            ` + date_html
     }
 
     function run_socket() {

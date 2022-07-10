@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from authentication.manager import get_profile_by_id
 from .manager import *
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 
 @login_required(login_url='/login/')
@@ -35,12 +36,12 @@ def get_messages(request, group_id):
     if request.method == 'GET':
         group = get_group_by_id(group_id)
         if group and group.members.contains(request.user):
-            gotten_messages_count = request.GET.get('count', 0)
+            gotten_messages_count = int(request.GET.get('count', 0))
+            msg_count = int(request.GET.get('msg_count', 10))
             data = {
-                'messages': get_group_messages(group),
-                'user_id': request.user.id
+                'messages': get_group_messages(group, gotten_messages_count, msg_count),
+                'user_id': request.user.id,
             }
-        
     return JsonResponse(data)
 
 

@@ -2,6 +2,7 @@ from authentication.models import Profile
 from authentication.manager import get_profile_by_id
 from django.db.models import Q
 from .models import *
+from datetime import datetime
 
 
 def get_profiles_by_text(text, my_id):
@@ -108,36 +109,30 @@ def get_replied_from_message_data(msg_id):
 
 def get_message_data(message):
     text_msg = TextMessage.objects.filter(message=message).first()
-    
+    sender = message.sender
     return {
         'id': message.id,
         'sender': {
-            'id': message.sender.id,
-            'name': message.sender.name,
-            'picture': message.sender.profile_img.url,
+            'id': sender.id,
+            'name': sender.name,
+            'picture': sender.profile_img.url,
         },
         'replied_from': get_replied_from_message_data(message.replied_from),
-        'sent_time': message.sent_time.strftime('%B %d|%H:%M'),
+        'sent_time': message.sent_time.strftime('%H:%M'),
         'text': text_msg.text
     } if text_msg else None
     
 
-def get_group_messages(group, start_from=0):
-    data = []
-    messages = Message.objects.filter(receiver=group).order_by('-sent_time')[start_from: start_from + 10]
+def get_group_messages(group, start_from=0, count=10):
+    data = {}
+    current_year = datetime.now().year
+    messages = Message.objects.filter(receiver=group).order_by('-sent_time')[start_from: start_from + count]
     for message in messages:
         msg_data = get_message_data(message)
         if msg_data:
-            data.append(msg_data)
-    # dates = Message.objects.filter(receiver=group).values_list('sent_time__date', flat=True).order_by('-sent_time__date')
-    # data = {}
-    # for date in dates:
-    #     key = date.strftime('%B %d')
-    #     data[key] = []
-    #     messages = Message.objects.filter(receiver=group, sent_time__date=date).order_by('-sent_time')
-    #     for message in messages:
-    #         message_data = get_message_data(message)
-    #         if message_data:
-    #             data[key].append(message_data)
+            key = message.sent_time.strftime('%B %d %Yy.') if message.sent_time.year != current_year else message.sent_time.strftime('%B %d') 
+            if key not in data:
+                data[key] = []
+            data[key].append(msg_data)
 
     return data

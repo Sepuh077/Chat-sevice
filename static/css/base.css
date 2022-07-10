@@ -14,14 +14,14 @@ body {
     width: calc(100vw - 10px);
 }
 
-.body {
+/* .body {
     background: linear-gradient(to right, rgb(7, 108, 179), rgb(236, 167, 13));
     border-radius: 20px;
     padding: 10px;
     height: calc(100% - 20px);
     width: calc(100% - 20px);
     overflow: hidden;
-}
+} */
 
 .content {
     background-color: rgb(35, 35, 35);
@@ -32,6 +32,11 @@ body {
 
 .header {
     height: 100px;
+}
+
+.logo {
+    height: 80px;
+    width: 80px;
 }
 
 .container {

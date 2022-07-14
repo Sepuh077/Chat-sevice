@@ -10,7 +10,7 @@ a {
 body {
     background-color: rgb(35, 35, 35);
     padding: 5px;
-    height: calc(100vh - 10px);
+    height: calc(100vh - 25px);
     width: calc(100vw - 10px);
 }
 

@@ -32,6 +32,7 @@
 
             </div>
         </div>
+        <div id="replied-from"></div>
         <div class="messasge-input">
             <input id="chat-message-input" type="text">
             <input id="chat-message-submit" type="button" value="Send">
@@ -39,6 +40,7 @@
         {{ group_id|json_script:"group-id" }}
     </div>
     {% endif %}
+    <img src="/static/img/giffs/chat-loader.gif" style="display: none;">
 </div>
 {% endblock content %}
 
@@ -80,25 +82,37 @@
         return ''
     }
 
-    function create_message_html(message) {
+    function create_message_html(message, value_id) {
         let time = new Date()
         let sent_time = time.getUTCHours() + ':' + time.getUTCMinutes()
+        let sent_time_sec = time.getUTCHours() + ':' + time.getUTCMinutes() + ':' + time.getUTCSeconds()
         let date_html = get_date_html(time)
         delete time
-        return `<div class="message-info-container" style="align-items: flex-end;">
-                <div class="message-info">
-                    <div class="message-text">
-                        <div class="message-header">
-                            ${sender_name}
-                        </div>
-                        ${message}
-                        <div class="message-sent-time">
-                            ${sent_time}
+        let other_styles = ''
+        return `<div class="message-info-container" style="align-items: flex-end;" value='${value_id}'>
+                    <div class="message-info">
+                        <div class="message-text">
+                            <div class="message-header">
+                                ${sender_name}
+                            </div>
+                            ${message}
+                            <div class="message-sent-time">
+                                ${sent_time}
+                                <div class='msg-status'>
+                                    <img src="/static/img/giffs/chat-loader.gif">
+                                </div>
+                            </div>
+                            <div class='msg-buttons'>
+                                <div class='reply-msg' value=''>
+                                    Reply
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            ` + date_html
+                ` + date_html
+
+                // value='${sent_time_sec}|${sender}' - this is bad solution
     }
 
     function run_socket() {
@@ -112,7 +126,8 @@
 
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#messages').innerHTML = create_message_html(data.message) + document.querySelector('#messages').innerHTML;
+            let value_id = data.value_id
+            $(`.message-info-container[value=${value_id}]`).find('.msg-status').html('<img src="/static/img/imgs/accepted.png">')
         };
 
         chatSocket.onclose = function (e) {
@@ -129,10 +144,14 @@
         document.querySelector('#chat-message-submit').onclick = function (e) {
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
+            let value_id = (Math.random() + 1).toString(36).substring(7);
             chatSocket.send(JSON.stringify({
+                'id': value_id,
                 'message': message,
-                'sender': sender
+                'sender': sender,
+                'replied_from': $("#replied-from").text()
             }));
+            document.querySelector('#messages').innerHTML = create_message_html(message, value_id) + document.querySelector('#messages').innerHTML;
             messageInputDom.value = '';
         };
     }
@@ -173,5 +192,6 @@
         })
     })
 </script>
-<script src="/static/js/get-messages.js"></script>
+<script src="/static/js/chat/get-messages.js"></script>
+<script src="/static/js/chat/reply.js"></script>
 {% endblock js %}

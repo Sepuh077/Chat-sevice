@@ -117,12 +117,34 @@
 
 .message-sent-time {
     width: 100%;
+    display: flex;
     text-align: end;
+    justify-content: flex-end;
     color: rgb(70, 70, 70);
     font-size: 14px;
+    height: 17px;
+}
+
+.msg-status {
+    height: 17px;
+}
+
+.msg-status img {
+    height: 100%;
 }
 
 .message-header {
     font-weight: bold;
     font-size: 15px;
+}
+
+.msg-buttons {
+    padding: 5px;
+    width: min-content;
+    background-color: rgb(230, 230, 230);
+}
+
+.msg-buttons:hover {
+    cursor: pointer;
+    background-color: rgb(220, 220, 220);
 }

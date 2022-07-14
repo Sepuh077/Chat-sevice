@@ -70,7 +70,18 @@ def get_user_groups_info(user):
     return info
 
 
-def create_text_message(sender_id, group_id, text):
+def get_replied_from_id(replied_from_data):
+    if not replied_from_data:
+        return None
+    if replied_from_data.isdigit() or isinstance(replied_from_data, int):
+        return int(replied_from_data)
+    try:
+        time, sender_id = replied_from_data.split('|')
+    except Exception:
+        return None
+
+
+def create_text_message(sender_id, group_id, text, replied_from):
     if not text:
         return
     sender = get_profile_by_id(sender_id)
@@ -83,17 +94,26 @@ def create_text_message(sender_id, group_id, text):
         return
     message = Message.objects.create(
         sender=sender,
-        receiver=group
+        receiver=group,
+        replied_from=get_replied_from_id(replied_from)
     )
     TextMessage.objects.create(
         message=message,
         text=text
     )
     
+    return int(message.id)
+    
+    
+def get_messages_by_args(**kwargs):
+    return Message.objects.filter(**kwargs)
+    
 
 def get_replied_from_message_data(msg_id):
+    if not msg_id:
+        return None
     try:
-        message = Message.objects.get(msg_id)
+        message = Message.objects.get(id=msg_id)
         text_msg = TextMessage.objects.filter(message=message).first()
         return {
             'id': message.id,

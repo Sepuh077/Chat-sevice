@@ -4,9 +4,10 @@ $(document).ready(function () {
     const msg_count_per_request = 10
     let is_all_received = false
     let can_get_next = false
+    let user_id
 
     function create_message_html(message) {
-        return `<div class="message-info-container" style="align-items: flex-end;">
+        return `<div class="message-info-container" ${message['sender']['id'] == user_id ? 'style="align-items: flex-end;"' : ''}>
                     <div class="message-info">
                         <div class="message-text">
                             <div class="message-header">
@@ -15,6 +16,11 @@ $(document).ready(function () {
                             ${message['text']}
                             <div class="message-sent-time">
                                 ${message['sent_time']}
+                            </div>
+                            <div class='msg-buttons'>
+                                <div class='reply-msg' value='${message['id']}'>
+                                    Reply
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -48,7 +54,7 @@ $(document).ready(function () {
                 'msg_count': msg_count_per_request
             },
             success: function (data) {
-                let user_id = data['user_id']
+                user_id = data['user_id']
                 let messages = data['messages']
                 let message_count = 0
                 

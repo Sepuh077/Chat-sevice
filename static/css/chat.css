@@ -122,11 +122,13 @@
     justify-content: flex-end;
     color: rgb(70, 70, 70);
     font-size: 14px;
-    height: 17px;
+    height: 15px;
+    margin-top: 5px;
 }
 
 .msg-status {
-    height: 17px;
+    height: 100%;
+    margin-left: 5px;
 }
 
 .msg-status img {

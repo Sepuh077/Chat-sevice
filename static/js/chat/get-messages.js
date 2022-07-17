@@ -16,6 +16,9 @@ $(document).ready(function () {
                             ${message['text']}
                             <div class="message-sent-time">
                                 ${message['sent_time']}
+                                <div class='msg-status'>
+                                        <img src="/static/img/imgs/accepted.png">
+                                </div>
                             </div>
                             <div class='msg-buttons'>
                                 <div class='reply-msg' value='${message['id']}'>
